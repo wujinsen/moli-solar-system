@@ -1,0 +1,393 @@
+export type ZodiacElement = "fire" | "earth" | "air" | "water";
+
+export interface ZodiacSign {
+  id: string;
+  name: string; // 中文
+  latin: string;
+  symbol: string; // ♈ etc.
+  element: ZodiacElement;
+  dates: string;
+  rulingPlanet: string;
+  brightestStar: string;
+  blurb: string;
+  longitude: number; // ecliptic longitude in degrees (placement around the sky)
+  // Simplified asterism, coordinates roughly in [-1, 1] (x right, y up).
+  stars: [number, number][];
+  // Optional per-star magnitude weight (relative brightness, ~0.6 - 1.4).
+  mags?: number[];
+  // Index pairs into `stars` describing the connecting lines.
+  lines: [number, number][];
+}
+
+export const ELEMENT_COLOR: Record<ZodiacElement, string> = {
+  fire: "#ff7a4d",
+  earth: "#e0b24f",
+  air: "#6fd6e6",
+  water: "#5a8cff",
+};
+
+export const ELEMENT_LABEL: Record<ZodiacElement, string> = {
+  fire: "火象",
+  earth: "土象",
+  air: "风象",
+  water: "水象",
+};
+
+export const ZODIAC: ZodiacSign[] = [
+  {
+    id: "aries",
+    name: "白羊座",
+    latin: "Aries",
+    symbol: "♈",
+    element: "fire",
+    dates: "3.21 – 4.19",
+    rulingPlanet: "火星",
+    brightestStar: "娄宿三 (Hamal)",
+    blurb:
+      "黄道第一宫，象征春天的开始。神话中那只生有金羊毛的飞羊，正是金羊毛冒险的源头。",
+    longitude: 0,
+    stars: [
+      [-0.85, 0.25],
+      [-0.25, 0.05],
+      [0.4, -0.05],
+      [0.85, 0.35],
+    ],
+    mags: [1.3, 1.1, 0.9, 0.8],
+    lines: [
+      [0, 1],
+      [1, 2],
+      [2, 3],
+    ],
+  },
+  {
+    id: "taurus",
+    name: "金牛座",
+    latin: "Taurus",
+    symbol: "♉",
+    element: "earth",
+    dates: "4.20 – 5.20",
+    rulingPlanet: "金星",
+    brightestStar: "毕宿五 (Aldebaran)",
+    blurb:
+      "公牛的头部由 V 形的毕星团勾勒，红色的毕宿五是公牛怒目的眼睛，附近还有著名的昴星团。",
+    longitude: 30,
+    stars: [
+      [-1.0, 1.0],
+      [-0.5, 0.45],
+      [0.0, 0.05],
+      [0.55, 0.45],
+      [1.0, 1.0],
+      [0.1, -0.1],
+    ],
+    mags: [0.8, 1.0, 1.4, 1.0, 0.8, 1.1],
+    lines: [
+      [0, 1],
+      [1, 2],
+      [2, 3],
+      [3, 4],
+      [2, 5],
+    ],
+  },
+  {
+    id: "gemini",
+    name: "双子座",
+    latin: "Gemini",
+    symbol: "♊",
+    element: "air",
+    dates: "5.21 – 6.21",
+    rulingPlanet: "水星",
+    brightestStar: "北河三 (Pollux)",
+    blurb:
+      "两个并肩而立的孪生兄弟卡斯托耳与波吕克斯，由两列平行的亮星构成，头顶的双星最为耀眼。",
+    longitude: 60,
+    stars: [
+      [-0.5, 1.0],
+      [-0.55, 0.2],
+      [-0.6, -0.9],
+      [0.5, 1.0],
+      [0.55, 0.2],
+      [0.6, -0.9],
+    ],
+    mags: [1.3, 0.9, 0.8, 1.2, 0.9, 0.8],
+    lines: [
+      [0, 1],
+      [1, 2],
+      [3, 4],
+      [4, 5],
+      [0, 3],
+      [1, 4],
+    ],
+  },
+  {
+    id: "cancer",
+    name: "巨蟹座",
+    latin: "Cancer",
+    symbol: "♋",
+    element: "water",
+    dates: "6.22 – 7.22",
+    rulingPlanet: "月亮",
+    brightestStar: "柳宿增三 (Al Tarf)",
+    blurb:
+      "黄道上最暗的星座，形如一只倒写的 Y。中心的鬼星团（蜂巢星团）是肉眼可见的疏散星团。",
+    longitude: 90,
+    stars: [
+      [0.0, 0.15],
+      [0.0, 0.95],
+      [-0.65, -0.6],
+      [0.65, -0.55],
+    ],
+    mags: [1.0, 0.8, 0.8, 0.8],
+    lines: [
+      [0, 1],
+      [0, 2],
+      [0, 3],
+    ],
+  },
+  {
+    id: "leo",
+    name: "狮子座",
+    latin: "Leo",
+    symbol: "♌",
+    element: "fire",
+    dates: "7.23 – 8.22",
+    rulingPlanet: "太阳",
+    brightestStar: "轩辕十四 (Regulus)",
+    blurb:
+      "雄狮的头颈由反问号状的“狮子镰刀”勾出，狮心轩辕十四明亮夺目，尾部的五帝座一构成后躯三角。",
+    longitude: 120,
+    stars: [
+      [-0.25, 1.0],
+      [-0.5, 0.55],
+      [-0.4, 0.2],
+      [-0.05, 0.0],
+      [0.55, -0.05],
+      [1.0, 0.2],
+      [0.5, 0.55],
+    ],
+    mags: [0.8, 0.9, 0.9, 1.4, 1.0, 1.1, 0.9],
+    lines: [
+      [0, 1],
+      [1, 2],
+      [2, 3],
+      [3, 4],
+      [4, 5],
+      [5, 6],
+      [6, 3],
+    ],
+  },
+  {
+    id: "virgo",
+    name: "处女座",
+    latin: "Virgo",
+    symbol: "♍",
+    element: "earth",
+    dates: "8.23 – 9.22",
+    rulingPlanet: "水星",
+    brightestStar: "角宿一 (Spica)",
+    blurb:
+      "手持麦穗的丰收女神，是全天第二大星座。蓝白色的角宿一代表她手中那束闪耀的麦穗。",
+    longitude: 150,
+    stars: [
+      [0.0, 0.7],
+      [-0.6, 1.0],
+      [0.6, 1.0],
+      [-0.05, 0.05],
+      [0.0, -1.0],
+      [0.7, -0.25],
+    ],
+    mags: [0.9, 0.8, 0.8, 1.0, 1.4, 0.8],
+    lines: [
+      [1, 0],
+      [2, 0],
+      [0, 3],
+      [3, 4],
+      [3, 5],
+    ],
+  },
+  {
+    id: "libra",
+    name: "天秤座",
+    latin: "Libra",
+    symbol: "♎",
+    element: "air",
+    dates: "9.23 – 10.23",
+    rulingPlanet: "金星",
+    brightestStar: "氐宿四 (Zubeneschamali)",
+    blurb:
+      "黄道上唯一的非生物——一架天平，象征正义女神手中的公正。它曾被视为天蝎的双螯。",
+    longitude: 180,
+    stars: [
+      [0.0, 0.65],
+      [-0.75, 0.0],
+      [0.75, 0.0],
+      [-0.7, -0.7],
+      [0.7, -0.7],
+    ],
+    mags: [1.0, 1.1, 1.0, 0.8, 0.8],
+    lines: [
+      [0, 1],
+      [0, 2],
+      [1, 2],
+      [1, 3],
+      [2, 4],
+    ],
+  },
+  {
+    id: "scorpio",
+    name: "天蝎座",
+    latin: "Scorpius",
+    symbol: "♏",
+    element: "water",
+    dates: "10.24 – 11.22",
+    rulingPlanet: "冥王星 / 火星",
+    brightestStar: "心宿二 (Antares)",
+    blurb:
+      "一只张螯翘尾的巨蝎，红超巨星心宿二是它跳动的心脏。长长的身躯弯成钩状，末端是毒针。",
+    longitude: 210,
+    stars: [
+      [-1.0, 0.6],
+      [-0.85, 0.3],
+      [-0.55, 0.45],
+      [-0.3, 0.15],
+      [-0.05, -0.15],
+      [0.25, -0.45],
+      [0.55, -0.6],
+      [0.85, -0.45],
+      [0.95, -0.15],
+    ],
+    mags: [0.8, 0.8, 0.8, 1.4, 1.0, 0.9, 0.9, 0.9, 1.0],
+    lines: [
+      [0, 2],
+      [1, 2],
+      [2, 3],
+      [3, 4],
+      [4, 5],
+      [5, 6],
+      [6, 7],
+      [7, 8],
+    ],
+  },
+  {
+    id: "sagittarius",
+    name: "射手座",
+    latin: "Sagittarius",
+    symbol: "♐",
+    element: "fire",
+    dates: "11.23 – 12.21",
+    rulingPlanet: "木星",
+    brightestStar: "箕宿三 (Kaus Australis)",
+    blurb:
+      "半人马弓箭手，最亮的几颗星组成著名的“茶壶”形状，箭尖正指向银河系中心的方向。",
+    longitude: 240,
+    stars: [
+      [-0.85, 0.0],
+      [-0.4, 0.35],
+      [0.0, 0.6],
+      [0.45, 0.35],
+      [0.85, 0.0],
+      [0.45, -0.45],
+      [-0.4, -0.45],
+    ],
+    mags: [1.1, 1.0, 0.9, 1.0, 1.2, 0.9, 0.9],
+    lines: [
+      [0, 1],
+      [1, 2],
+      [2, 3],
+      [3, 4],
+      [4, 5],
+      [5, 6],
+      [6, 1],
+      [1, 3],
+    ],
+  },
+  {
+    id: "capricorn",
+    name: "摩羯座",
+    latin: "Capricornus",
+    symbol: "♑",
+    element: "earth",
+    dates: "12.22 – 1.19",
+    rulingPlanet: "土星",
+    brightestStar: "垒壁阵四 (Deneb Algedi)",
+    blurb:
+      "上半身是羊、下半身是鱼的“海山羊”，星点连成一个宽阔的三角形，是黄道中较暗的星座。",
+    longitude: 270,
+    stars: [
+      [-0.9, 0.35],
+      [-0.3, 0.6],
+      [0.35, 0.5],
+      [0.9, 0.15],
+      [0.4, -0.6],
+      [-0.4, -0.5],
+    ],
+    mags: [1.0, 0.8, 0.8, 1.1, 0.9, 0.9],
+    lines: [
+      [0, 1],
+      [1, 2],
+      [2, 3],
+      [3, 4],
+      [4, 5],
+      [5, 0],
+    ],
+  },
+  {
+    id: "aquarius",
+    name: "水瓶座",
+    latin: "Aquarius",
+    symbol: "♒",
+    element: "air",
+    dates: "1.20 – 2.18",
+    rulingPlanet: "天王星 / 土星",
+    brightestStar: "虚宿一 (Sadalsuud)",
+    blurb:
+      "倒水的少年，上方的折线是他手中的水瓶，下方蜿蜒的星流象征倾泻而下、流向南鱼座的水。",
+    longitude: 300,
+    stars: [
+      [-0.9, 0.5],
+      [-0.4, 0.2],
+      [0.0, 0.5],
+      [0.45, 0.2],
+      [0.9, 0.5],
+      [0.25, -0.3],
+      [0.0, -0.7],
+      [0.35, -1.0],
+    ],
+    mags: [0.9, 1.0, 0.9, 1.0, 0.9, 0.8, 0.8, 0.8],
+    lines: [
+      [0, 1],
+      [1, 2],
+      [2, 3],
+      [3, 4],
+      [3, 5],
+      [5, 6],
+      [6, 7],
+    ],
+  },
+  {
+    id: "pisces",
+    name: "双鱼座",
+    latin: "Pisces",
+    symbol: "♓",
+    element: "water",
+    dates: "2.19 – 3.20",
+    rulingPlanet: "海王星 / 木星",
+    brightestStar: "右更二 (Alpherg)",
+    blurb:
+      "两条由丝带相连、朝相反方向游动的鱼。神话中爱神维纳斯与儿子化身双鱼，逃离怪物提丰。",
+    longitude: 330,
+    stars: [
+      [-1.0, 0.25],
+      [-0.5, -0.1],
+      [0.0, -0.3],
+      [0.5, 0.0],
+      [0.95, 0.45],
+    ],
+    mags: [1.0, 0.8, 1.1, 0.8, 1.0],
+    lines: [
+      [0, 1],
+      [1, 2],
+      [2, 3],
+      [3, 4],
+    ],
+  },
+];
