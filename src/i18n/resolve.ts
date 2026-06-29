@@ -4,9 +4,11 @@ import { findComet } from "../data/comets";
 import { findStation } from "../data/station";
 import { findBlackHole } from "../data/blackholes";
 import { findSystem } from "../data/systems";
-import type { Locale } from "./types";
+import type { Locale, LocalizedFact } from "./types";
 import { t, tf } from "./ui";
 import { getEntityOverlay, TAG_TO_CATEGORY } from "./entities";
+import { getPanelOverlay } from "./panels";
+import { localizeFactValue } from "./factValues";
 
 export function getLocalizedName(id: string, locale: Locale): string {
   const overlay = getEntityOverlay(id, locale);
@@ -49,28 +51,93 @@ function localizeFactKey(k: string, locale: Locale): string {
   return tf(locale, k) || k;
 }
 
+export function localizeFactsArray(
+  facts: LocalizedFact[],
+  locale: Locale
+): LocalizedFact[] {
+  if (locale === "zh") return facts;
+  return facts.map((f) => ({
+    k: localizeFactKey(f.k, locale),
+    v: localizeFactValue(f.v, locale),
+  }));
+}
+
+function moonFallbackDescription(
+  parentId: string | undefined,
+  locale: Locale
+): string {
+  const parent = parentId ? getLocalizedName(parentId, locale) : "";
+  if (locale === "en") return `Natural satellite of ${parent}.`;
+  if (locale === "ja") return `${parent}の天然衛星。`;
+  return "";
+}
+
+export function getLocalizedPanelContent(
+  id: string,
+  locale: Locale,
+  zh: { description: string; tagline?: string; facts: LocalizedFact[] }
+): { description: string; tagline?: string; facts: LocalizedFact[] } {
+  if (locale === "zh") return zh;
+
+  const panel = getPanelOverlay(id, locale);
+  const entity = getEntityOverlay(id, locale);
+
+  return {
+    description: panel?.description ?? entity?.description ?? zh.description,
+    tagline: panel?.tagline ?? zh.tagline,
+    facts:
+      panel?.facts ??
+      entity?.facts ??
+      localizeFactsArray(zh.facts, locale),
+  };
+}
+
 export function localizeSelection(
   base: ResolvedSelection,
   locale: Locale
 ): ResolvedSelection {
   if (locale === "zh") return base;
 
-  const overlay = getEntityOverlay(base.id, locale);
-  const displayName =
-    overlay?.name ?? (locale === "en" ? base.nameEn : base.name);
-
+  const panel = getPanelOverlay(base.id, locale);
+  const entity = getEntityOverlay(base.id, locale);
   const parentId = base.isMoon ? findMoon(base.id)?.parent.id : undefined;
+
+  const displayName =
+    entity?.name ?? (locale === "en" ? base.nameEn : base.name);
+
+  let description =
+    panel?.description ??
+    entity?.description ??
+    base.description;
+
+  if (
+    base.isMoon &&
+    !panel?.description &&
+    !entity?.description &&
+    description.includes("的天然卫星")
+  ) {
+    description = moonFallbackDescription(parentId, locale);
+  }
+
+  const facts =
+    panel?.facts ??
+    entity?.facts ??
+    localizeFactsArray(
+      base.facts.map((f) =>
+        f.k === "母星" && parentId
+          ? { ...f, v: getLocalizedName(parentId, locale) }
+          : f
+      ),
+      locale
+    );
 
   return {
     ...base,
     name: displayName,
-    tag: overlay?.tag ?? localizeTag(base.tag, locale),
-    description: overlay?.description ?? base.description,
+    tag: entity?.tag ?? localizeTag(base.tag, locale),
+    description,
     parentName: parentId ? getLocalizedName(parentId, locale) : base.parentName,
-    facts: base.facts.map((f) => ({
-      k: localizeFactKey(f.k, locale),
-      v: f.v,
-    })),
+    facts,
   };
 }
 

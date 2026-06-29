@@ -3,12 +3,21 @@ export { LOCALES, LOCALE_LABELS } from "./types";
 export { t, tf, UI } from "./ui";
 export { getEntityOverlay, SOLAR_BRIEF, TAG_TO_CATEGORY } from "./entities";
 export { localizeSystemMenu, localizeBlackHoleMenu } from "./menu";
+export { localizePanelFields, getPanelOverlay } from "./panels";
+export {
+  getZodiacElementLabel,
+  getZodiacSignField,
+  ZODIAC_PANEL_LABELS,
+} from "./zodiac-i18n";
+export { localizeFactValue } from "./factValues";
 export {
   getLocalizedName,
   localizeSelection,
   resolveLocalizedSelection,
   getSystemMenuName,
   getBlackHoleCategoryLabel,
+  getLocalizedPanelContent,
+  localizeFactsArray,
 } from "./resolve";
 export { LanguageSwitcher } from "./LanguageSwitcher";
 
